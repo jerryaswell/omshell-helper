@@ -12,7 +12,6 @@ if [ $# -eq 3 ]; then
   value=$3
 fi
 
-
 function usage {
 if [ $# -eq 1 ]; then
   # echo the error to STDERR
@@ -67,11 +66,6 @@ exit
 if [ $# -lt 2 ]; then
   usage "not enough arguments were provided"
 fi
-
-case $option in
-  "read") regex="(control|failover-state)";;
-  "set") regex="[1-11];;
-esac
 
 # Verify the usage by trying really hard to quit
 # option is read
