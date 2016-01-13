@@ -4,7 +4,7 @@ Helper script that outputs valid omshell commands
 ## Setup
 You will need to create a file called `omshell-helper.conf` in the following format. These variables correspond to the values configured in the dhcpd.conf file. For information about how to configure omapi on dhcp: http://www.jedi.be/blog/2010/12/08/automating-dhcp-management-with-omapi/
 
-* omshell-helper.conf *
+omshell-helper.conf
 
      SERVER="<ip-address>"
      PORT="<port to connect to>"
