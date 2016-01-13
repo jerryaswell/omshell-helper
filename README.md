@@ -1,6 +1,55 @@
 # omshell-helper
 Helper script that outputs valid omshell commands
 
+## Usage
+
+     omshell-helper [option] [object] [value]
+
+### option
+
+Acceptable options are...
+
+`read`, which will display the state of the indicated object.
+
+`set`, which will change the state of the indicated object.
+
+### object
+
+Acceptable objects are...
+
+`control`, which allows you to shut the server down.
+
+`failover-state`, which tracks the state of the failover protocol.
+
+### value
+Acceptable values are determined based on the selected object.
+
+#### Values applicable to the control object
+* 2 -> Shut the DHCP server down. 
+
+#### Values applicable to the failover-state object
+* 1   -> startup
+* 2   -> normal
+* 3   -> communications interrupted
+* 4   -> partner down
+* 5   -> potential conflict
+* 6   -> recover
+* 7   -> paused
+* 8   -> shutdown
+* 9   -> recover done
+* 10  -> resolution interrupted
+* 11  -> conflict done
+
+### Examples
+To read the control object:
+
+     $(readlink -f $0) read control | omshell
+
+To set the failover-state to shutdown:
+
+     $(readlink -f $0) set failover-state 8 | omshell
+
+
 ## Setup
 You will need to create a file called `omshell-helper.conf` in the following format. These variables correspond to the values configured in the dhcpd.conf file. For information about how to configure omapi on dhcp: http://www.jedi.be/blog/2010/12/08/automating-dhcp-management-with-omapi/
 
