@@ -62,48 +62,18 @@ EOF
 exit
 }
 
-# Less than 2 options is always wrong
-if [ $# -lt 2 ]; then
-  usage "not enough arguments were provided"
+# Test the option
+regex="^(set|read)$"
+if [[ ! $option =~ $regex ]]; then
+  usage "bad option"
+  exit
 fi
 
-# Verify the usage by trying really hard to quit
-# option is read
-if [ $option = "read" ]; then
-  # exclusively accept either control or failover-state objects
-  if [[ $object != "control" && $object != "failover-state" ]]; then
-    usage "object is invalid"
-  fi
-elif [ $option = "set" ]; then
-  # if the control object is selected
-  if [ $object = "control" ]; then
-    # value is not set, implying that no value was specified 
-    if [[ -z ${value+x} ]]; then
-      # there must be a value
-      usage "no value was specified"
-    # the value is not 2
-    elif [ $value -ne 2 ]; then
-      # exit
-      usage "the only valid option for the control object is 2"
-    fi
-  # if the failover-state object is selected
-  elif [ $object = "failover-state" ]; then
-    # no value was specified
-    if [[ -z ${value+x} ]]; then
-      # there must be a value
-      usage "no value was specified"
-    # value is less than 1 or greater than 11
-    elif [[ $value -lt 1 || $value -gt 11 ]]; then
-      # value must be 1 through 11
-      usage "value is not 1 through 11"
-    fi
-  # object is invalid
-  else
-    usage "object is invalid"
-  fi
-# option is invalid
-else
-  usage "a  valid option was not specified"
+# Test the object
+regex="^(control|failover-state)$"
+if [[ ! $object =~ $regex ]]; then
+  usage "bad object"
+  exit
 fi
 
 # Always at least display object
@@ -119,6 +89,17 @@ EOF
 
 # Only set a value if it was indicated
 if [ $option = "set" ]; then
+
+  # Test the value
+  case $object in
+    control) regex="^2$";;
+    failover-state) regex="(^[1-9]$|^1[01]$)";;
+  esac
+  if [[ ! $value =~ $regex ]]; then
+    usage "bad value"
+    exit
+  fi
+
   echo "set $object = $value" >> $tmpfile
   echo "update" >> $tmpfile
 fi
