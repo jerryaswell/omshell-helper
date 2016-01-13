@@ -7,10 +7,7 @@ tmpfile="/tmp/omshell-helper-$USER"
 # Internal variables
 option=$1
 object=$2
-# Only set value if three arguments were provided
-if [ $# -eq 3 ]; then
-  value=$3
-fi
+value=$3
 
 function usage {
 if [ $# -eq 1 ]; then
