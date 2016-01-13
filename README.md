@@ -24,6 +24,8 @@ Acceptable objects are...
 ### value
 Acceptable values are determined based on the selected object.
 
+A value only needs to be specified if the option is "set". No values are neccesary to read an object.
+
 #### Values applicable to the control object
 * 2 -> Shut the DHCP server down. 
 
