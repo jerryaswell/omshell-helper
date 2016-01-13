@@ -1,0 +1,132 @@
+#!/bin/bash
+
+tmpfile="/tmp/omshell-helper-$USER"
+
+# Include the configuration file
+. omshell-helper.conf
+# Internal variables
+option=$1
+object=$2
+# Only set value if three arguments were provided
+if [ $# -eq 3 ]; then
+  value=$3
+fi
+
+
+function usage {
+if [ $# -eq 1 ]; then
+  # echo the error to STDERR
+  echo -e "\nERROR: $1\n" >&2
+fi
+
+cat <<- EOF
+	USAGE
+	    $(readlink -f $0) [option] [object] [value]
+
+	option
+	     read
+	     └── display the state of the indicated object.
+	     set
+	     └── change the state of the indicated object.
+
+	object
+	     control
+	     └── The  control object allows you to shut the server down.
+	     failover-state
+	     └── tracks the state of the failover protocol.
+
+	value is exclusive to the object
+	     Values applicable to the control object
+	     └── 2 -> Shut the DHCP server down. 
+	     Values applicable to the failover-state object
+	     ├── 1   -> startup
+             ├── 2   -> normal
+             ├── 3   -> communications interrupted
+             ├── 4   -> partner down
+             ├── 5   -> potential conflict
+             ├── 6   -> recover
+             ├── 7   -> paused
+             ├── 8   -> shutdown
+             ├── 9   -> recover done
+             ├── 10  -> resolution interrupted
+             └── 11  -> conflict done
+
+	EXAMPLES
+	     To read the control object:
+
+	          $(readlink -f $0) read control | omshell
+
+	     To set the failover-state to shutdown:
+
+	          $(readlink -f $0) set failover-state 8 | omshell
+EOF
+exit
+}
+
+# Less than 2 options is always wrong
+if [ $# -lt 2 ]; then
+  usage "not enough arguments were provided"
+fi
+
+case $option in
+  "read") regex="(control|failover-state)";;
+  "set") regex="[1-11];;
+esac
+
+# Verify the usage by trying really hard to quit
+# option is read
+if [ $option = "read" ]; then
+  # exclusively accept either control or failover-state objects
+  if [[ $object != "control" && $object != "failover-state" ]]; then
+    usage "object is invalid"
+  fi
+elif [ $option = "set" ]; then
+  # if the control object is selected
+  if [ $object = "control" ]; then
+    # value is not set, implying that no value was specified 
+    if [[ -z ${value+x} ]]; then
+      # there must be a value
+      usage "no value was specified"
+    # the value is not 2
+    elif [ $value -ne 2 ]; then
+      # exit
+      usage "the only valid option for the control object is 2"
+    fi
+  # if the failover-state object is selected
+  elif [ $object = "failover-state" ]; then
+    # no value was specified
+    if [[ -z ${value+x} ]]; then
+      # there must be a value
+      usage "no value was specified"
+    # value is less than 1 or greater than 11
+    elif [[ $value -lt 1 || $value -gt 11 ]]; then
+      # value must be 1 through 11
+      usage "value is not 1 through 11"
+    fi
+  # object is invalid
+  else
+    usage "object is invalid"
+  fi
+# option is invalid
+else
+  usage "a  valid option was not specified"
+fi
+
+# Always at least display object
+cat <<- EOF > $tmpfile
+	server $SERVER
+	port $PORT
+	key omapi-key $KEY
+	connect
+	new $object
+	set name = "$NAME"
+	open
+EOF
+
+# Only set a value if it was indicated
+if [ $option = "set" ]; then
+  echo "set $object = $value" >> $tmpfile
+  echo "update" >> $tmpfile
+fi
+
+cat "$tmpfile"
