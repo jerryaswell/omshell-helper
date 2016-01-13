@@ -63,20 +63,22 @@ exit
 }
 
 # Test the option
+# - only accept "set" or "read"
 regex="^(set|read)$"
 if [[ ! $option =~ $regex ]]; then
-  usage "bad option"
+  usage "bad option. See the option section below."
   exit
 fi
 
 # Test the object
+# - only accept "control" or "failover-state"
 regex="^(control|failover-state)$"
 if [[ ! $object =~ $regex ]]; then
-  usage "bad object"
+  usage "bad object. See the object section below."
   exit
 fi
 
-# Always at least display object
+# At least display the object
 cat <<- EOF > $tmpfile
 	server $SERVER
 	port $PORT
@@ -87,14 +89,24 @@ cat <<- EOF > $tmpfile
 	open
 EOF
 
-# Only set a value if it was indicated
+# Only proceed if option is set
 if [ $option = "set" ]; then
 
   # Test the value
+  # - acceptable values are different depending on the object
   case $object in
+
+    # For the control object
+    # - only accept "2"
     control) regex="^2$";;
+
+    # For the failover-state object
+    # - only accept numerical values from 1 through 11
     failover-state) regex="(^[1-9]$|^1[01]$)";;
+
   esac
+
+  # Perform the test using the regex determined above
   if [[ ! $value =~ $regex ]]; then
     usage "bad value"
     exit
@@ -105,3 +117,4 @@ if [ $option = "set" ]; then
 fi
 
 cat "$tmpfile"
+rm "$tmpfile"
