@@ -45,11 +45,11 @@ A value only needs to be specified if the option is "set". No values are neccesa
 ### Examples
 To read the control object:
 
-     $(readlink -f $0) read control | omshell
+     omshell-helper read control | omshell
 
 To set the failover-state to shutdown:
 
-     $(readlink -f $0) set failover-state 8 | omshell
+     omshell-helper set failover-state 8 | omshell
 
 
 ## Setup
