@@ -39,16 +39,16 @@ cat <<- EOF
 	     └── 2 -> Shut the DHCP server down. 
 	     Values applicable to the failover-state object
 	     ├── 1   -> startup
-             ├── 2   -> normal
-             ├── 3   -> communications interrupted
-             ├── 4   -> partner down
-             ├── 5   -> potential conflict
-             ├── 6   -> recover
-             ├── 7   -> paused
-             ├── 8   -> shutdown
-             ├── 9   -> recover done
-             ├── 10  -> resolution interrupted
-             └── 11  -> conflict done
+	     ├── 2   -> normal
+	     ├── 3   -> communications interrupted
+	     ├── 4   -> partner down
+	     ├── 5   -> potential conflict
+	     ├── 6   -> recover
+	     ├── 7   -> paused
+	     ├── 8   -> shutdown
+	     ├── 9   -> recover done
+	     ├── 10  -> resolution interrupted
+	     └── 11  -> conflict done
 
 	EXAMPLES
 	     To read the control object:
